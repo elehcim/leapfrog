@@ -9,7 +9,8 @@ using namespace std;
 
 
 const double mu = 0.01;
-const double h  = 0.01;
+const double h  = 0.001;
+const double t_max = 100;
 
 double energy(Vec r, Vec v)
 {
@@ -23,7 +24,7 @@ Vec acceleration(Vec r)
 
 double energy_error(double E, double E0)
 {
-    return abs(E - E0) / E0;
+    return (E - E0) / E0;
 }
 
 
@@ -43,30 +44,33 @@ int main()
     cout << "a0 = " << setprecision(8) << a0 << endl;
     cout << "E0 = " << setprecision(8) << E0 << endl;
 
-    outfile << r0.x() << ' ' << r0.y() << ' ' << E0 << ' ' << 0 << '\n';
+    outfile << "# t x y E err\n" << endl;
+
+    outfile << 0 << ' ' << r0.x() << ' ' << r0.y() << ' ' << E0 << ' ' << 0 << '\n';
 
     Vec r_half = r0 + 0.5 * h * v0 + 1.0/8.0 * h*h * a0;
 
     Vec v_n(v0);
-    Vec r_nphalf(r_half);
+    Vec r(r_half);
 
-    cout << "r_nphalf = " << r_nphalf << endl;
+    cout << "r = " << r << endl;
+    cout << "Going to perform " << t_max/h << " steps" << endl;
 
-    for (int i = 0; i <= 100000; ++i)
+    for (double t=h; t < t_max; t += h)
     {
-        // Kick
-        Vec v_np1 = v_n + h * acceleration(r_nphalf);
-        Vec r_nmhalf = r_nphalf;
-      
         // Drift
-        r_nphalf = r_nmhalf + h * v_n;
-        v_n = v_np1;
+        r = r + h * v_n;
+
+        // Kick
+        Vec v_np1 = v_n + h * acceleration(r);
 
         // Compute energy error
-        Vec v_nphalf = (v_np1 - v_n) / 2;
-        double E_nphalf = energy(r_nphalf, v_nphalf);
+        Vec v_nphalf = (v_np1 + v_n) / 2;
+        double E_nphalf = energy(r, v_nphalf);
         double relative_error = energy_error(E_nphalf, E0);
-        outfile << r_nphalf.x() << ' ' << r_nphalf.y() << ' ' << E_nphalf << ' '<< relative_error <<'\n';
+
+        v_n = v_np1;
+        outfile << t << ' ' << r.x() << ' ' << r.y() << ' ' << E_nphalf << ' '<< relative_error <<'\n';
     }
 
     outfile.close();

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # load the columns
-x, y, energy, err = np.loadtxt("orbit.txt", unpack=True)
+t, x, y, energy, err = np.loadtxt("orbit.txt", unpack=True)
 
 # create and save the plot
 fig = plt.figure(figsize=(4,6))
@@ -15,7 +15,7 @@ ax1.set_xlabel("x")
 ax1.set_ylabel("y")
 
 # ax2.set_title("energy")
-ax2.plot(err)
+ax2.plot(t, err)
 ax2.set_xlabel("t")
 ax2.set_ylabel("energy relative error")
 
