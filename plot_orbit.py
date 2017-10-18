@@ -16,6 +16,7 @@ ax1.set_ylabel("y")
 
 # ax2.set_title("energy")
 ax2.plot(t, err)
+ax2.set_yscale('log')
 ax2.set_xlabel("t")
 ax2.set_ylabel("energy relative error")
 

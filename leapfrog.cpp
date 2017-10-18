@@ -9,8 +9,8 @@ using namespace std;
 
 
 const double mu = 0.01;
-const double h  = 0.001;
-const double t_max = 100;
+const double h  = 0.01;
+const double t_max = 500;
 
 double energy(Vec r, Vec v)
 {
@@ -24,7 +24,14 @@ Vec acceleration(Vec r)
 
 double energy_error(double E, double E0)
 {
-    return (E - E0) / E0;
+    return abs((E - E0) / E0);
+}
+
+double period(Vec r, Vec v)
+{
+    double e = energy(r, v);
+    double a = -mu/(2*e);
+    return 2 * M_PI * sqrt(a*a*a / mu);
 }
 
 
@@ -54,7 +61,10 @@ int main()
     Vec r(r_half);
 
     cout << "r = " << r << endl;
-    cout << "Going to perform " << t_max/h << " steps" << endl;
+    double T = period(r0, v0);
+    cout << "Period = " << T << endl;
+    cout << "t_max = " << t_max << endl;
+    cout << "Going to perform " << t_max/h << " steps. " << t_max/T << " orbits." << endl;
 
     for (double t=h; t < t_max; t += h)
     {
